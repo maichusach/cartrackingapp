@@ -1,74 +1,65 @@
-import { ScrollView, StyleSheet, View } from 'react-native';
-
 import Button from '@/components/Button';
-import EquipmentRentalTrackingList from '@/components/EquipmentRentalTrackingList';
+import CustomerList from '@/components/CustomerList';
 import Header from '@/components/Header';
 import Input from '@/components/Input';
 import ScreenWrapper from '@/components/ScreenWrapper';
 import Typo from '@/components/Typo';
 import { colors, spacingX, spacingY } from '@/constants/theme';
-import { GetTrackingCarDayList } from '@/services/trackingCarDayService';
-import { EquipmentRentalTrackingType } from '@/types';
+import { GetCustomersList } from '@/services/customerService';
+import { CustomerType } from '@/types';
 import { verticalScale } from '@/utils/styling';
 import { Entypo } from '@expo/vector-icons';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import { useFocusEffect, useRouter } from 'expo-router';
-import { useCallback, useEffect, useState } from 'react';
+import { useFocusEffect } from '@react-navigation/native';
+import { useRouter } from 'expo-router';
+import React, { useCallback, useEffect, useState } from 'react';
+import { ScrollView, StyleSheet, View } from 'react-native';
 
-export default function HomeScreen() {
-  const router = useRouter();
-  const [filtered, setFiltered] = useState<EquipmentRentalTrackingType[]>([]);
-  const [trackingcars, setTrackingcars] = useState<EquipmentRentalTrackingType[]>([]);
-  const [searchText, setSearchText] = useState(""); 
+const Customer = () => {
 
-   useEffect(() => { 
-      const checkLogin   = async () => { 
-            //console.log(token);
-            const token = await AsyncStorage.getItem("userToken"); 
-            if(token == null)
-            {
-              router.push("/login");
-            }
-        };
-        checkLogin();
-        loadTrackingCarDays();
-    }, []);
-
+     const router = useRouter();
+    const [searchText, setSearchText] = useState(""); 
+     const [reload, setReload] = useState(false); // trigger reload
+     
+    const [filtered, setFiltered] = useState<CustomerType[]>([]);
+    const [customers, setCustomers] = useState<CustomerType[]>([]);
   
+    const loadCustomers   = async () => { 
+        //console.log(token);
+        const allCustomers = await GetCustomersList(""); 
+        setCustomers(allCustomers);
+        setFiltered(allCustomers);
+        //console.log(data1);
+    };
+    
+    useEffect(() => { 
+        loadCustomers();
+    }, [reload]);
 
-  const loadTrackingCarDays   = async () => { 
-          //console.log(token);
-          const allTrackingCarDays = await GetTrackingCarDayList(); 
-          setTrackingcars(allTrackingCarDays);
-          setFiltered(allTrackingCarDays);
-          //console.log(allContracts);
-      };
-       
     useEffect(() => {
         const lower = searchText.toLowerCase();
-        //const filteredData = trackingcars;
-        const filteredData = trackingcars?.filter(c =>
-            c.carCode.toLowerCase().includes(lower)
-        ); 
+        const filteredData = customers?.filter(c =>
+        c.customerName.toLowerCase().includes(lower)
+        );
         setFiltered(filteredData);
-    }, [searchText, trackingcars]);
-
+    }, [searchText, customers]);
+ 
     useFocusEffect(
         useCallback(() => {
-            loadTrackingCarDays();
-        }, [])
+            loadCustomers();
+        }, [reload])
     );
+
   return (
-     <ScreenWrapper>
+    <ScreenWrapper>
        <View style = {styles.container}>
             <Header
-                title={"Nhật ký công trình"}
+                title={"NCC/NTP"} 
                 style={{marginBottom:spacingY._10}}
             />
             {/** form */}
         <ScrollView contentContainerStyle={styles.form}> 
             <View style={styles.inputContainer}>
-                <Typo color={colors.neutral200}>Nhập thông tin tìm kiếm</Typo>
+                <Typo color={colors.neutral200}>Mã hoặc tên NCC/NTP</Typo>
                 <Input 
                     placeholder='Mã hoặc tên'
                     value={searchText}
@@ -81,11 +72,11 @@ export default function HomeScreen() {
             </View> 
             {/** List customer */}
             <View>
-                <EquipmentRentalTrackingList data={filtered}
+                <CustomerList data={filtered}
                 />
             </View>
         </ScrollView>
-        <Button style={styles.floatingButton} onPress={()=> router.push("/(modal)/equipmentRentalTrackingModal")}>
+        <Button style={styles.floatingButton} onPress={()=> router.push("/(modal)/customerModal")}>
           <Entypo 
             name='plus'
             color={colors.black}
@@ -95,8 +86,10 @@ export default function HomeScreen() {
         </Button>
        </View>
     </ScreenWrapper>
-  );
+  )
 }
+
+export default Customer
 
 const styles = StyleSheet.create({
      container:{

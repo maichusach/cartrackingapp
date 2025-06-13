@@ -9,7 +9,8 @@
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "nguyenbahau.AppCarTracking"
     },
     "android": {
       "adaptiveIcon": {
@@ -34,7 +35,8 @@
           "resizeMode": "contain",
           "backgroundColor": "#ffffff"
         }
-      ]
+      ],
+      "expo-secure-store"
     ],
     "experiments": {
       "typedRoutes": true
@@ -42,8 +44,9 @@
     "extra": {
       "router": {},
       "eas": {
-        "projectId": "8e2ec693-6a48-49e9-9644-a9c58c411ee5"
+        "projectId": "042e946b-9b14-4f62-9932-b152986b7c7a"
       }
-    }
+    },
+    "owner": "hoahauvn2018"
   }
 }

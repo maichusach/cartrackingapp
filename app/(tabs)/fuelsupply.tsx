@@ -1,68 +1,61 @@
-import { ScrollView, StyleSheet, View } from 'react-native';
-
 import Button from '@/components/Button';
-import EquipmentRentalTrackingList from '@/components/EquipmentRentalTrackingList';
+import FuelSupplyList from '@/components/FuelSupplyList';
 import Header from '@/components/Header';
 import Input from '@/components/Input';
 import ScreenWrapper from '@/components/ScreenWrapper';
 import Typo from '@/components/Typo';
 import { colors, spacingX, spacingY } from '@/constants/theme';
-import { GetTrackingCarDayList } from '@/services/trackingCarDayService';
-import { EquipmentRentalTrackingType } from '@/types';
+import { GetFuelSupplyList } from '@/services/fuelSupplyService';
+import { FuelSupplyType } from '@/types';
 import { verticalScale } from '@/utils/styling';
 import { Entypo } from '@expo/vector-icons';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import { useFocusEffect, useRouter } from 'expo-router';
-import { useCallback, useEffect, useState } from 'react';
+import { useFocusEffect } from '@react-navigation/native';
+import { useRouter } from 'expo-router';
+import React, { useCallback, useEffect, useState } from 'react';
+import { ScrollView, StyleSheet, View } from 'react-native';
 
-export default function HomeScreen() {
-  const router = useRouter();
-  const [filtered, setFiltered] = useState<EquipmentRentalTrackingType[]>([]);
-  const [trackingcars, setTrackingcars] = useState<EquipmentRentalTrackingType[]>([]);
-  const [searchText, setSearchText] = useState(""); 
+const FuelSupply = () => {
 
-   useEffect(() => { 
-      const checkLogin   = async () => { 
-            //console.log(token);
-            const token = await AsyncStorage.getItem("userToken"); 
-            if(token == null)
-            {
-              router.push("/login");
-            }
-        };
-        checkLogin();
-        loadTrackingCarDays();
-    }, []);
-
+     const router = useRouter();
+    const [searchText, setSearchText] = useState(""); 
+     const [reload, setReload] = useState(false); // trigger reload
+     
+    const [filtered, setFiltered] = useState<FuelSupplyType[]>([]);
+    const [buyfuels, setBuyfuels] = useState<FuelSupplyType[]>([]);
   
+    const loadBuyfuels   = async () => { 
+        //console.log(token);
+        const allContracts = await GetFuelSupplyList(); 
+        setBuyfuels(allContracts);
+        setFiltered(allContracts);
+        //console.log(allContracts);
+    };
+    
+    useEffect(() => { 
+        loadBuyfuels();
+    }, [reload]);
 
-  const loadTrackingCarDays   = async () => { 
-          //console.log(token);
-          const allTrackingCarDays = await GetTrackingCarDayList(); 
-          setTrackingcars(allTrackingCarDays);
-          setFiltered(allTrackingCarDays);
-          //console.log(allContracts);
-      };
-       
     useEffect(() => {
         const lower = searchText.toLowerCase();
-        //const filteredData = trackingcars;
-        const filteredData = trackingcars?.filter(c =>
-            c.carCode.toLowerCase().includes(lower)
+        //const filteredData = buyfuels;
+        const filteredData = buyfuels?.filter(c =>
+            c.equipmentTypeName.toLowerCase().includes(lower)
         ); 
         setFiltered(filteredData);
-    }, [searchText, trackingcars]);
-
+    }, [searchText, buyfuels]);
+ 
     useFocusEffect(
         useCallback(() => {
-            loadTrackingCarDays();
-        }, [])
+            loadBuyfuels();
+        }, [reload])
     );
+
   return (
-     <ScreenWrapper>
+    <ScreenWrapper>
        <View style = {styles.container}>
             <Header
-                title={"Nhật ký công trình"}
+                title={"Danh sách cấp nhiên liệu"}
+               
                 style={{marginBottom:spacingY._10}}
             />
             {/** form */}
@@ -81,11 +74,11 @@ export default function HomeScreen() {
             </View> 
             {/** List customer */}
             <View>
-                <EquipmentRentalTrackingList data={filtered}
+                <FuelSupplyList data={filtered}
                 />
             </View>
         </ScrollView>
-        <Button style={styles.floatingButton} onPress={()=> router.push("/(modal)/equipmentRentalTrackingModal")}>
+        <Button style={styles.floatingButton} onPress={()=> router.push("/(modal)/fuelsupplyModal")}>
           <Entypo 
             name='plus'
             color={colors.black}
@@ -95,8 +88,10 @@ export default function HomeScreen() {
         </Button>
        </View>
     </ScreenWrapper>
-  );
+  )
 }
+
+export default FuelSupply
 
 const styles = StyleSheet.create({
      container:{
