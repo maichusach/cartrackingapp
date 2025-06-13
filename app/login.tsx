@@ -10,7 +10,7 @@ import { FontAwesome, FontAwesome5 } from '@expo/vector-icons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useRouter } from 'expo-router';
 import React, { useEffect, useRef, useState } from 'react';
-import { Alert, StyleSheet, View } from 'react-native';
+import { Alert, Pressable, StyleSheet, View } from 'react-native';
 
 
 const Login = () => {
@@ -107,14 +107,14 @@ const Login = () => {
             </View>
 
             {/** footer */}
-            {/* <View style={styles.footer}>
-                <Typo size={15}>Bạn chưa có tài khoản?</Typo>
-                <Pressable onPress={()=> router.navigate("/(auth)/register")}>
+            <View style={styles.footer}>
+                <Typo size={15}>Thay </Typo>
+                <Pressable onPress={()=> router.navigate("/registerlink")}>
                     <Typo size={15} fontWeight={"700"} color={colors.primary}>
-                        Đăng ký
+                        liên kết
                     </Typo>
                 </Pressable>
-            </View> */}
+            </View>
             
         </View>
     </ScreenWrapper>
