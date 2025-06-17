@@ -9,6 +9,7 @@ import { GetFuelSupplyList } from '@/services/fuelSupplyService';
 import { FuelSupplyType } from '@/types';
 import { verticalScale } from '@/utils/styling';
 import { Entypo } from '@expo/vector-icons';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useFocusEffect } from '@react-navigation/native';
 import { useRouter } from 'expo-router';
 import React, { useCallback, useEffect, useState } from 'react';
@@ -32,8 +33,17 @@ const FuelSupply = () => {
     };
     
     useEffect(() => { 
+        const checkToken  = async () => { 
+            //console.log(token);
+            const token = await AsyncStorage.getItem("userToken"); 
+            if(token == null)
+            {
+              router.push("/login");
+            }
+        };
+        checkToken();
         loadBuyfuels();
-    }, [reload]);
+    }, []);
 
     useEffect(() => {
         const lower = searchText.toLowerCase();
@@ -43,11 +53,11 @@ const FuelSupply = () => {
         ); 
         setFiltered(filteredData);
     }, [searchText, buyfuels]);
- 
+
     useFocusEffect(
         useCallback(() => {
             loadBuyfuels();
-        }, [reload])
+        }, [])
     );
 
   return (

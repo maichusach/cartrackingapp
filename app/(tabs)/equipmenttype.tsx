@@ -9,6 +9,7 @@ import { GetEquipmentTypeList } from '@/services/equipmentTypeService';
 import { EquipmentTypeType } from '@/types';
 import { verticalScale } from '@/utils/styling';
 import { Entypo } from '@expo/vector-icons';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useFocusEffect } from '@react-navigation/native';
 import { useRouter } from 'expo-router';
 import React, { useCallback, useEffect, useState } from 'react';
@@ -32,8 +33,17 @@ const EquipmentType = () => {
     };
     
     useEffect(() => { 
+        const checkToken  = async () => { 
+            //console.log(token);
+            const token = await AsyncStorage.getItem("userToken"); 
+            if(token == null)
+            {
+              router.push("/login");
+            }
+        };
+        checkToken();
         loadEquipmentTypes();
-    }, [reload]);
+    }, []);
 
     useEffect(() => {
         const lower = searchText.toLowerCase();
@@ -46,7 +56,7 @@ const EquipmentType = () => {
     useFocusEffect(
         useCallback(() => {
             loadEquipmentTypes();
-        }, [reload])
+        }, [])
     );
 
   return (

@@ -9,6 +9,7 @@ import { GetContractList } from '@/services/contractService';
 import { ContractType } from '@/types';
 import { verticalScale } from '@/utils/styling';
 import { Entypo } from '@expo/vector-icons';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useFocusEffect } from '@react-navigation/native';
 import { useRouter } from 'expo-router';
 import React, { useCallback, useEffect, useState } from 'react';
@@ -32,8 +33,17 @@ const Contract = () => {
     };
     
     useEffect(() => { 
+        const checkToken  = async () => { 
+            //console.log(token);
+            const token = await AsyncStorage.getItem("userToken"); 
+            if(token == null)
+            {
+              router.push("/login");
+            }
+        };
+        checkToken();
         loadContracts();
-    }, [reload]);
+    }, []);
 
     useEffect(() => {
         const lower = searchText.toLowerCase();
@@ -47,7 +57,7 @@ const Contract = () => {
     useFocusEffect(
         useCallback(() => {
             loadContracts();
-        }, [reload])
+        }, [])
     );
 
   return (

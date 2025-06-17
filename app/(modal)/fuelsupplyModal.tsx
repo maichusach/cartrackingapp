@@ -11,6 +11,7 @@ import { FuelSupplyType } from '@/types';
 import { formatCurrency } from '@/utils/common';
 import { scale, verticalScale } from '@/utils/styling';
 import { FontAwesome } from '@expo/vector-icons';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import React, { useEffect, useState } from 'react';
@@ -92,6 +93,15 @@ const FuelSupplyModal = () => {
     const oldFuelSupply : paramType = useLocalSearchParams();
  
     useEffect(()=>{
+        const checkToken  = async () => { 
+            //console.log(token);
+            const token = await AsyncStorage.getItem("userToken"); 
+            if(token == null)
+            {
+              router.push("/login");
+            }
+        };
+        checkToken();
         if(oldFuelSupply?.fuelSupplyId){
             setFuelSupply({
                 fuelSupplyId: oldFuelSupply?.fuelSupplyId, 

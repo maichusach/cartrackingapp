@@ -10,6 +10,7 @@ import { GetInfoUser, UpdateUser } from '@/services/userService';
 import { UserDataType } from '@/types';
 import { scale, verticalScale } from '@/utils/styling';
 import { Ionicons } from '@expo/vector-icons';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Image } from 'expo-image';
 import * as ImagePicker from 'expo-image-picker';
 import { router } from 'expo-router';
@@ -28,6 +29,15 @@ const ProfileModal = () => {
     const [loading, setLoading] = useState(false); 
 
     useEffect(() =>{
+        const checkToken  = async () => { 
+            //console.log(token);
+            const token = await AsyncStorage.getItem("userToken"); 
+            if(token == null)
+            {
+              router.push("/login");
+            }
+        };
+        checkToken();
         const loadUserData = async () => {
         try {
             const userInfor = await GetInfoUser();    

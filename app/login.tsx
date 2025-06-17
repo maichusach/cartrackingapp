@@ -49,7 +49,7 @@ const Login = () => {
         console.log(res);
         setIsLoading(false);
         if(!res.success){
-            Alert.alert("Login hau", res.msg);
+            Alert.alert("Login", res.msg);
         }
         else{
             router.replace("/(tabs)");

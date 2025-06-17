@@ -201,9 +201,10 @@ export const loginUserService = async (username: string, password:string) => {
         //console.log("OK2");
         return {success:true}
       } catch (error: any) {
+        const linkCustom1 = await AsyncStorage.getItem("companyLink"); 
         //let msg = error.mese
         //throw new Error('Login failed');
-        return {success:false, msg:"Login failed" + error.message};
+        return {success:false, msg:"Login failed " + error.message + " Link" + linkCustom1};
       }
     };
 

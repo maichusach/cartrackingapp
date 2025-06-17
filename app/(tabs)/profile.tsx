@@ -8,6 +8,7 @@ import { GetInfoUser, logoutUser } from '@/services/userService';
 import { accountOptionType, UserType } from '@/types';
 import { verticalScale } from '@/utils/styling';
 import { AntDesign, FontAwesome, FontAwesome5, MaterialIcons } from '@expo/vector-icons';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Image } from 'expo-image';
 import { useRouter } from 'expo-router';
 import React, { useEffect, useState } from 'react';
@@ -19,6 +20,15 @@ const Profile = () => {
     const [user, setUser] = useState<UserType>(null);
 
      useEffect(() => { 
+        const checkToken  = async () => { 
+            //console.log(token);
+            const token = await AsyncStorage.getItem("userToken"); 
+            if(token == null)
+            {
+              router.push("/login");
+            }
+        };
+        checkToken();
             const loadUserData = async () => {
                 try {
                     const userInfor = await GetInfoUser();    

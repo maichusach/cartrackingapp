@@ -46,7 +46,16 @@ const EquipmentTypeModal = () => {
     const oldEquipmentType : paramType = useLocalSearchParams();
  
     useEffect(()=>{
-        if(oldEquipmentType?.isCreate){
+        const checkToken  = async () => { 
+            //console.log(token);
+            const token = await AsyncStorage.getItem("userToken"); 
+            if(token == null)
+            {
+              router.push("/login");
+            }
+        };
+        checkToken();
+        if(oldEquipmentType?.equipmentTypeCode){
             setEquipmentType({
                 equipmentTypeCode: oldEquipmentType?.equipmentTypeCode,
                 equipmentTypeName: oldEquipmentType?.equipmentTypeName,

@@ -9,6 +9,7 @@ import { createOrUpdateCustomer, deleteCustomer } from '@/services/customerServi
 import { CustomerType } from '@/types';
 import { scale, verticalScale } from '@/utils/styling';
 import { FontAwesome } from '@expo/vector-icons';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import React, { useEffect, useState } from 'react';
 import { Alert, ScrollView, StyleSheet, View } from 'react-native';
@@ -43,6 +44,15 @@ const CustomerModal = () => {
     const oldCustomer : paramType = useLocalSearchParams();
  
     useEffect(()=>{
+        const checkToken  = async () => { 
+            //console.log(token);
+            const token = await AsyncStorage.getItem("userToken"); 
+            if(token == null)
+            {
+              router.push("/login");
+            }
+        };
+        checkToken();
         if(oldCustomer?.customerId){
             setCustomer({
                 customerId: oldCustomer?.customerId,
